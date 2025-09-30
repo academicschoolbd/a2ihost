@@ -65,6 +65,29 @@
     .whatsapp-button:hover {
       background-color: #1ebe5d;
     }
+
+    /* WhatsApp Popup */
+    #whatsappPopup {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      padding: 16px;
+      max-width: 320px;
+      z-index: 999;
+      display: none;
+      border: 1px solid #e0e0e0;
+    }
+    #whatsappPopup p {
+      margin: 0 0 12px 0;
+      font-size: 0.95rem;
+    }
+    #whatsappPopup .btn {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -173,6 +196,17 @@
     <i class="bi bi-whatsapp"></i>
   </a>
 
+  <!-- WhatsApp Popup -->
+  <div id="whatsappPopup">
+    <p>💬 Need help? Chat with us on WhatsApp for instant support!</p>
+    <div class="d-flex gap-2">
+      <button id="goToWhatsApp" class="btn btn-success btn-sm">
+        <i class="bi bi-whatsapp"></i> Go to WhatsApp
+      </button>
+      <button id="cancelPopup" class="btn btn-outline-secondary btn-sm">Cancel</button>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer>
     <div class="container">
@@ -180,5 +214,45 @@
     </div>
   </footer>
 
+  <!-- Auto WhatsApp Redirect Script -->
+  <script>
+    // 🔑 Replace with your actual WhatsApp number (with country code, no + or spaces)
+    const WHATSAPP_NUMBER = '8801518926933';
+    const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+
+    let autoRedirectTimeout;
+    let popupTimeout;
+
+    // Show popup after 10 seconds
+    popupTimeout = setTimeout(() => {
+      document.getElementById('whatsappPopup').style.display = 'block';
+      
+      // Auto-redirect after 5 more seconds (total 15s)
+      autoRedirectTimeout = setTimeout(() => {
+        window.location.href = WHATSAPP_URL;
+      }, 5000);
+    }, 10000); // 10 seconds
+
+    // Cancel popup and redirect
+    document.getElementById('cancelPopup').addEventListener('click', () => {
+      document.getElementById('whatsappPopup').style.display = 'none';
+      clearTimeout(autoRedirectTimeout);
+    });
+
+    // Go to WhatsApp immediately
+    document.getElementById('goToWhatsApp').addEventListener('click', () => {
+      window.location.href = WHATSAPP_URL;
+    });
+
+    // Also cancel if user clicks anywhere else (optional)
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#whatsappPopup') && !e.target.closest('.whatsapp-button')) {
+        if (document.getElementById('whatsappPopup').style.display === 'block') {
+          document.getElementById('whatsappPopup').style.display = 'none';
+          clearTimeout(autoRedirectTimeout);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
